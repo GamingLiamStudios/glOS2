@@ -1,3 +1,5 @@
+// SPDX-License-Identifier: LGPL-2.1-only
+
 const VGA_BUFFER: *mut u16 = 0xb8000 as *mut u16;
 
 #[derive(Default)]

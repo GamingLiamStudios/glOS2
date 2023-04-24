@@ -2,6 +2,10 @@
 time_summary = false
 default_to_workspace = false
 
+[tasks.install-deps]
+command = "cargo"
+args = ["install", "cargo-deny", "--locked"]
+
 [tasks.build]
 command = "cargo"
 args = ["build", "--release"]
@@ -32,3 +36,7 @@ run_task = [
     { name = "clean", condition = { files_modified = { input = ["link.ld"], output = ["glos.iso"] } } },
     { name = "run" },
 ]
+
+[tasks.check]
+command = "cargo"
+args = ["deny", "check"]

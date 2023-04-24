@@ -1,3 +1,9 @@
+// Copyright (C) 2023 GamingLiamStudios
+// SPDX-License-Identifier: LGPL-2.1-only
+
+//! Build script for the kernel
+//! Generates the multiboot header
+
 use std::io::Write;
 use std::vec::Vec;
 

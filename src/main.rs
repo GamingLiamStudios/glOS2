@@ -1,5 +1,13 @@
+// SPDX-License-Identifier: LGPL-2.1-only
+
 #![no_std]
 #![no_main]
+
+/* Place this in the root of any crate that exposes functions
+#![warn(missing_docs)]
+#![warn(missing_crate_level_docs)]
+#![warn(missing_doc_code_examples)]
+*/
 
 mod kernel;
 mod vga;

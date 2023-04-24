@@ -1,7 +1,9 @@
 [package]
-name = "glos"
-version = "2.0.0"
+name = "glos2"
+version = "0.0.1"
 edition = "2021"
+authors = ["GamingLiamStudios <58615717+GamingLiamStudios@users.noreply.github.com>"]
+license = "LGPL-2.1-only"
 
 build = "build.rs"
 resolver = "2"
