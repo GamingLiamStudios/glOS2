@@ -14,7 +14,7 @@ Now with that legal disclosure out of the way, what is the actual plan this time
 
 - [x] Barebones Kernel
 - [ ] Text Console
-  - [ ] GDT
+  - [x] GDT
   - [ ] IDT
   - [ ] Screen Scrolling
 - [ ] Heap Memory Allocation
@@ -59,7 +59,8 @@ cd glOS2
 makers install-deps
 
 # Then just
-makers run
+makers build-rls # generates glos.iso
+makers run # launches qemu w/ logs
 ```
 
 If you're going to be updating `link.ld` - make sure you run `makers clean` after, otherwise your changes won't propagate. (Annoying, I know.)
