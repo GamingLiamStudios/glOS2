@@ -6,20 +6,36 @@ default_to_workspace = false
 command = "cargo"
 args = ["install", "cargo-deny", "--locked"]
 
-[tasks.build]
-command = "cargo"
-args = ["build", "--release"]
+[tasks.build-debug]
+script_runner = "@duckscript"
+script = '''
+exec cargo build --profile debug
+mv target/i686-unknown-none/debug/glos2 target/i686-unknown-none
+'''
+
+[tasks.build-dev]
+script_runner = "@duckscript"
+script = '''
+exec cargo build --profile devel
+mv target/i686-unknown-none/devel/glos2 target/i686-unknown-none
+'''
+
+[tasks.build-rls]
+script_runner = "@duckscript"
+script = '''
+exec cargo build --release
+mv target/i686-unknown-none/release/glos2 target/i686-unknown-none
+'''
 
 [tasks.create-iso]
-dependencies = ["build"]
-condition = { files_modified = { input = ["target/i686-unknown-none/release/glos"], output = ["glos.iso"] } }
 script_runner = "@duckscript"
 script = '''
 mkdir iso/boot/grub
-cp target/i686-unknown-none/release/glos iso/boot/glos
+cp target/i686-unknown-none/glos2 iso/boot/glos
 writefile iso/boot/grub/grub.cfg "set timeout=0\nset default=0\nmenuentry \"glOS\" {\nmultiboot2 /boot/glos\nboot\n}"
 exec grub-mkrescue -o glos.iso iso
 rm -r iso
+rm target/i686-unknown-none/glos2
 '''
 
 [tasks.clean]
@@ -29,12 +45,24 @@ args = ["clean"]
 [tasks.run]
 dependencies = ["create-iso"]
 command = "qemu-system-i386"
-args = ["-cdrom", "glos.iso"]
+args = ["-d", "int,pcall,cpu_reset", "-D", "log.txt", "-cdrom", "glos.iso", "-no-reboot", "-no-shutdown", "-M", "smm=off"]
+
+[tasks.dev]
+dependencies = [
+    "build-dev",
+    "run"
+]
 
 [tasks.debug]
-run_task = [
-    { name = "clean", condition = { files_modified = { input = ["link.ld"], output = ["glos.iso"] } } },
-    { name = "run" },
+dependencies = [
+    "build-debug",
+    "run"
+]
+
+[tasks.release]
+dependencies = [
+    "build-rls",
+    "create-iso"
 ]
 
 [tasks.check]

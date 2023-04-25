@@ -10,11 +10,21 @@ resolver = "2"
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
+[profile.devel]
+inherits = "dev"
+panic = "abort"
+
+opt-level = 1
+
 [profile.dev]
 panic = "abort"
 
 [profile.release]
 panic = "abort"
+
+lto = "thin"
+opt-level = 2
+
 
 [dependencies]
 libc = "0.2"
