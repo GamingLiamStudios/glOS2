@@ -21,6 +21,8 @@ Now with that legal disclosure out of the way, what is the actual plan this time
   - [ ] Timers
   - [ ] Floating-Point Support
 - [ ] Text Console
+  - [ ] PIC
+  - [ ] Keyboard input
   - [ ] Screen Scrolling
   - [ ] Heap Memory Allocation
   - [ ] Framebuffer via VESA

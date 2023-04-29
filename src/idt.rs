@@ -78,6 +78,68 @@ naked_function!(general_interrupt {
 
 naked_function!(skip_interrupt {});
 
+macro_rules! create_exception_panics {
+    (@$name:ident) => {
+        paste::paste! {
+            naked_function!([<$name:snake>] {
+                panic!(concat!(stringify!($name), " Exception"));
+            });
+        }
+    };
+    (@$name:ident HasCode) => {
+        paste::paste! {
+            naked_function!([<$name:snake>] {
+                // TODO: Include error code with panic
+                panic!(concat!(stringify!($name), " Exception with error code"));
+            });
+        }
+    };
+    [$($name:ident $($feature:ident)? = $value:expr,)*] => {
+        $(create_exception_panics!(@$name $($feature)?);)*
+
+        fn init_exceptions() {
+            paste::paste! {
+                $(
+                    let desc = IdtDescriptor::new(
+                        KERNEL_CS,
+                        [<$name:snake>] as usize as u32,
+                        IdtDescriptorType::InterruptGate,
+                        0,
+                    );
+                    unsafe { desc.write(&mut IDT[8 * $value..]) };
+                )*
+            }
+        }
+    }
+}
+
+create_exception_panics![
+    DivideByZero = 0x00,
+    Debug = 0x01,
+    NonMaskableInterrupt = 0x02,
+    Breakpoint = 0x03,
+    Overflow = 0x04,
+    BoundRangeExceeded = 0x05,
+    InvalidOpcode = 0x06,
+    DeviceNotAvailable = 0x07,
+    DoubleFault HasCode = 0x08,
+    CoprocessorSegmentOverrun = 0x09,
+    InvalidTSS HasCode = 0x0A,
+    SegmentNotPresent HasCode = 0x0B,
+    StackSegmentFault HasCode = 0x0C,
+    GeneralProtectionFault HasCode = 0x0D,
+    PageFault HasCode = 0x0E,
+    X87FloatingPoint = 0x10,
+    AlignmentCheck = 0x11,
+    MachineCheck = 0x12,
+    SIMDFloatingPoint = 0x13,
+    Virtualization = 0x14,
+    ControlProtection = 0x15,
+    Hypervisor = 0x1C,
+    VMMCommunication = 0x1D,
+    Security = 0x1E,
+];
+
 #[no_mangle]
 #[inline(never)]
 pub fn init_idt() {
@@ -110,6 +172,7 @@ pub fn init_idt() {
         for i in 0..32 {
             ge.write(&mut IDT[8 * i..]);
         }
+        init_exceptions(); // Customized panic messages for exceptions
 
         // According to the OSDev Wiki, the PICs remap IRQs 8-15 to 0x70-78.
         // but 8-15 overlap with the CPU exceptions? I'll just leave 'em out for now.
