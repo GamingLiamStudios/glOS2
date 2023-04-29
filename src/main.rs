@@ -3,6 +3,7 @@
 #![no_std]
 #![no_main]
 #![feature(panic_info_message)]
+#![feature(naked_functions)]
 
 /* Place this in the root of any crate that exposes functions
 #![warn(missing_docs)]
@@ -15,7 +16,7 @@ mod idt;
 mod kernel;
 mod vga;
 
-use core::arch::{asm, global_asm};
+use core::arch::asm;
 use core::panic::PanicInfo;
 use core::sync::atomic;
 
@@ -24,15 +25,20 @@ use core::sync::atomic;
 pub static MULTIBOOT_HEADER: [u8; include_bytes!(concat!(env!("OUT_DIR"), "/multiboot.bin"))
     .len()] = *include_bytes!(concat!(env!("OUT_DIR"), "/multiboot.bin"));
 
-global_asm!(
-    ".global _start",
-    "_start:",
-    "push ebx",
-    "push eax",
-    "mov STACK_TOP, esp",
-    "call main"
-);
+// Well it's better than `global_asm!` imo
+#[no_mangle]
+#[naked]
+unsafe extern "C" fn _start() -> ! {
+    asm!(
+        "push ebx",
+        "push eax",
+        "mov STACK_TOP, esp",
+        "call main",
+        options(noreturn)
+    )
+}
 
+// This is the actual entry-poing of the Kernel.
 #[no_mangle]
 extern "C" fn main(eax: u32, _ebx: u32) -> ! {
     // Check if the bootloader is multiboot2
@@ -40,12 +46,9 @@ extern "C" fn main(eax: u32, _ebx: u32) -> ! {
         panic!("Bootloader is not multiboot2");
     }
 
-    vga::clear_screen();
-
-    idt::init_idt();
+    // GDT + IDT not initalized as specified by Multiboot2 2.0, so we do it ourselves.
     gdt::init_gdt();
-
-    // GDT + IDT not initalized as specified by Multiboot2 2.0
+    idt::init_idt();
 
     kernel::main();
 

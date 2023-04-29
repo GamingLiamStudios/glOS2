@@ -13,25 +13,33 @@ As for the License of glOS2, It is [`LGPL-2.1-only`](https://spdx.org/licenses/L
 Now with that legal disclosure out of the way, what is the actual plan this time?
 
 - [x] Barebones Kernel
-- [ ] Text Console
+- [ ] 64-bit Support
   - [x] GDT
   - [ ] IDT
+  - [ ] Higher-Half Kernel
+  - [ ] Paging
+  - [ ] Timers
+  - [ ] Floating-Point Support
+- [ ] Text Console
   - [ ] Screen Scrolling
-- [ ] Heap Memory Allocation
-- [ ] Framebuffer via VESA
-  - [ ] Fonts
+  - [ ] Heap Memory Allocation
+  - [ ] Framebuffer via VESA
+    - [ ] Fonts
+- [ ] Programs (ELF)
+  - [ ] Scheduler
+  - [ ] Multitasking (Single Threaded)
+- [ ] Filesystem
+  - [ ] FAT32 Support
+  - [ ] Main FS (ext4 or custom?)
+- [ ] Full Rust Support for Programs (`std`, `alloc`, etc)
+  - [ ] libstdc implementation (which also means C/C++ support)
+  - [ ] Compiler Toolchain
 - [ ] Windows
   - [ ] Rectangles
   - [ ] Viewports
   - [ ] Multiple Windows
   - [ ] Window Manager (Tiled?)
-- [ ] UI Library
-- [ ] Filesystem
-- [ ] Programs (ELF)
-- [ ] 64-bit Support (oh god dual-wielding)
-- [ ] Full Rust Support for Programs (`std`, `alloc`, etc)
-  - [ ] libstdc implementation (which also means C/C++ support)
-  - [ ] Compiler Toolchain
+  - [ ] UI Library
 - [ ] Security
   - [ ] Seperate User-space & Kernel-space
   - [ ] Permissions System

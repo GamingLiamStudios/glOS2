@@ -9,22 +9,25 @@ args = ["install", "cargo-deny", "--locked"]
 [tasks.build-debug]
 script_runner = "@duckscript"
 script = '''
-exec cargo build --profile debug
-mv target/i686-unknown-none/debug/glos2 target/i686-unknown-none
+rm target/i686-unknown-none/glos2
+exec cargo build --profile dev
+cp target/i686-unknown-none/debug/glos2 target/i686-unknown-none/glos2
 '''
 
 [tasks.build-dev]
 script_runner = "@duckscript"
 script = '''
+rm target/i686-unknown-none/glos2
 exec cargo build --profile devel
-mv target/i686-unknown-none/devel/glos2 target/i686-unknown-none
+cp target/i686-unknown-none/devel/glos2 target/i686-unknown-none/glos2
 '''
 
 [tasks.build-rls]
 script_runner = "@duckscript"
 script = '''
+rm target/i686-unknown-none/glos2
 exec cargo build --release
-mv target/i686-unknown-none/release/glos2 target/i686-unknown-none
+cp target/i686-unknown-none/release/glos2 target/i686-unknown-none/glos2
 '''
 
 [tasks.create-iso]
@@ -47,6 +50,11 @@ dependencies = ["create-iso"]
 command = "qemu-system-i386"
 args = ["-d", "int,pcall,cpu_reset", "-D", "log.txt", "-cdrom", "glos.iso", "-no-reboot", "-no-shutdown", "-M", "smm=off"]
 
+[tasks.run-debug]
+dependencies = ["create-iso"]
+command = "qemu-system-i386"
+args = ["-d", "int,pcall,cpu_reset", "-D", "log.txt", "-cdrom", "glos.iso", "-no-reboot", "-no-shutdown", "-M", "smm=off", "-s", "-S"]
+
 [tasks.dev]
 dependencies = [
     "build-dev",
@@ -56,7 +64,7 @@ dependencies = [
 [tasks.debug]
 dependencies = [
     "build-debug",
-    "run"
+    "run-debug"
 ]
 
 [tasks.release]
