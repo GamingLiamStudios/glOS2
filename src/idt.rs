@@ -1,9 +1,6 @@
 use core::arch::asm;
 
-use crate::{
-    gdt::{SegmentSelector, KERNEL_CS},
-    vga::{self, VGAState},
-};
+use crate::gdt::{SegmentSelector, KERNEL_CS};
 
 enum IdtDescriptorType {
     InterruptGate = 0b1110,
@@ -37,7 +34,7 @@ impl IdtDescriptor {
         idt[6] = (self.offset >> 16) as u8;
         idt[7] = (self.offset >> 24) as u8;
 
-        let ss: u16 = self.segsel.into();
+        let ss: u16 = self.segsel;
         idt[2] = ss as u8;
         idt[3] = (ss >> 8) as u8;
 

@@ -15,7 +15,7 @@ Now with that legal disclosure out of the way, what is the actual plan this time
 - [x] Barebones Kernel
 - [ ] 64-bit Support
   - [x] GDT
-  - [ ] IDT
+  - [x] IDT
   - [ ] Higher-Half Kernel
   - [ ] Paging
   - [ ] Timers
